@@ -13,33 +13,32 @@ module.exports.readPost = (req, res) => {
     }).sort({ createdAt: -1 });
 };
 module.exports.createPost = async (req, res) => {
-    let fileName;
-  
-    if (req.file !== null) {
-      try {
-        if (
-          req.file.detectedMimeType != "image/jpg" &&
-          req.file.detectedMimeType != "image/png" &&
-          req.file.detectedMimeType != "image/jpeg"
-        )
-          throw Error("invalid file");
-  
-        if (req.file.size > 500000) throw Error("max size");
-      } catch (err) {
-        const errors = uploadErrors(err);
-        return res.status(201).json({ errors });
-      }
-      fileName = req.body.posterId + Date.now() + ".jpg";
-  
-      await pipeline(
-        req.file.stream,
-        fs.createWriteStream(
-          `${__dirname}/public/uploads/posts/${fileName}`
-        )
-      );
+  let fileName;
+
+  if (req.file !== null) {
+    try {
+      if (
+        req.file.detectedMimeType != "image/jpg" &&
+        req.file.detectedMimeType != "image/png" &&
+        req.file.detectedMimeType != "image/jpeg"
+      )
+        throw Error("invalid file");
+
+      if (req.file.size > 500000) throw Error("max size");
+    } catch (err) {
+      const errors = uploadErrors(err);
+      return res.status(201).json({ errors });
     }
-  
-    const newPost = new postModel({
+    fileName = req.body.posterId + Date.now() + ".jpg";
+
+    await pipeline(
+      req.file.stream,
+      fs.createWriteStream(
+        `${__dirname}../../../Projet_Frontend/public/uploads/posts/${fileName}`
+      )
+    );
+  }
+    const newPost = new PostModel({
       posterId: req.body.posterId,
       message: req.body.message,
       picture: req.file !== null ? "./uploads/posts/" + fileName : "",
