@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const cors = require('cors');
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
+const bookRoutes = require('./routes/book.routes');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config({path: './config/.env'});
@@ -24,9 +25,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-// Routes
-app.use('/api/user', userRoutes);
-app.use('/api/post', postRoutes);
 
 // jwt
 app.get('*', checkUser); // dans chaque requete on doit vérifier si c'est bien le user concerné
@@ -34,6 +32,10 @@ app.get('/jwtid', requireAuth, (req, res) => {
     res.status(200).send(res.locals.user._id)
 });
 
+// Routes
+app.use('/api/user', userRoutes);
+app.use('/api/post', postRoutes);
+app.use('/api/book', bookRoutes);
 
 
 // Server
