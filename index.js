@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes');
 const bookRoutes = require('./routes/book.routes');
+const authorRoutes = require('./routes/author.routes');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config({path: './config/.env'});
@@ -36,6 +37,7 @@ app.get('/jwtid', requireAuth, (req, res) => {
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/book', bookRoutes);
+app.use('/api/author', authorRoutes);
 
 
 // Server
