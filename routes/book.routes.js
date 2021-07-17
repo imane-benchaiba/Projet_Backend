@@ -13,12 +13,6 @@ router.patch('/comment-book/:id', bookController.commentBook);
 router.patch('/edit-comment-book/:id', bookController.editCommentBook);
 router.patch('/delete-comment-book/:id', bookController.deleteCommentBook);
 
-router.patch('/currentlyreading-book/:id', bookController.currentlyreadingBook);
-router.patch('/read-book/:id', bookController.readBook);
-router.patch('/wanttoread-book/:id', bookController.wanttoreadBook);
 
-router.patch('/uncurrentlyreading-book/:id', bookController.uncurrentlyreadingBook);
-router.patch('/unread-book/:id', bookController.unreadBook);
-router.patch('/unwanttoread-book/:id', bookController.unwanttoreadBook);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const UserModel = require('../models/user.model');
+const BookModel = require('../models/book.model');
 const objectID = require('mongoose').Types.ObjectID;
 
 module.exports.getAllUsers = async (req, res) => {
@@ -120,3 +121,185 @@ module.exports.unfollow = async (req, res) => {
         return res.status(500).json({ message: err});
     }
 } 
+
+
+module.exports.currentlyreading = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown (currentlyreading): " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $addToSet: { currentlyreading: req.body.idCr },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idCr,
+      {
+        $addToSet: { currentlyreading: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports.uncurrentlyreading = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown (uncurrentlyreading): " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: { currentlyreading: req.body.idUnCr },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idUnCr,
+      {
+        $pull: { currentlyreading: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports.read = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown (read): " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $addToSet: { read: req.body.idRead },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idRead,
+      {
+        $addToSet: { read: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports.unread = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown : " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: { read: req.body.idUnRead },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idUnRead,
+      {
+        $pull: { read: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports.wanttoread = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown : " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $addToSet: { wanttoread: req.body.idWtr },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idWtr,
+      {
+        $addToSet: { wanttoread: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports.unwanttoread = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknown : " + req.params.id);
+
+  try {
+    await BookModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: { wanttoread: req.body.idUnWtr },
+      },
+      { new: true },
+      (err, docs) => {
+        if (err) return res.status(400).send(err);
+      }
+    );
+    await UserModel.findByIdAndUpdate(
+      req.body.idUnWtr,
+      {
+        $pull: { wanttoread: req.params.id },
+      },
+      { new: true },
+      (err, docs) => {
+        if (!err) res.send(docs);
+        else return res.status(400).send(err);
+      }
+    );
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
