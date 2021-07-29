@@ -1,6 +1,6 @@
 const UserModel = require('../models/user.model');
 const BookModel = require('../models/book.model');
-const objectID = require('mongoose').Types.ObjectID;
+const ObjectID = require('mongoose').Types.ObjectID;
 
 module.exports.getAllUsers = async (req, res) => {
     const users = await UserModel.find().select('-password');
@@ -184,38 +184,49 @@ module.exports.uncurrentlyreading = async (req, res) => {
   }
 };
 module.exports.read = async (req, res) => {
-  if (!ObjectID.isValid(req.params.id))
-    return res.status(400).send("ID unknown (read): " + req.params.id);
+  const { id } = req.params;
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(400).send({
+        message: "User not found",
+      });
+    }
 
   try {
-    await BookModel.findByIdAndUpdate(
+    await UserModel.findByIdAndUpdate(
       req.params.id,
       {
         $addToSet: { read: req.body.idRead },
       },
-      { new: true },
+      { new: true, upsert: true },
       (err, docs) => {
-        if (err) return res.status(400).send(err);
+        if (!err) res.status(201).json(docs);
+        else return res.status(400).json(err);
       }
     );
-    await UserModel.findByIdAndUpdate(
+    await BookModel.findByIdAndUpdate(
       req.body.idRead,
       {
         $addToSet: { read: req.params.id },
       },
-      { new: true },
+      { new: true, upsert: true },
       (err, docs) => {
-        if (!err) res.send(docs);
-        else return res.status(400).send(err);
+        if (err) return res.status(400).json(err);
       }
     );
+    
   } catch (err) {
-    return res.status(400).send(err);
+    return res.status(400).json({message: err});
   }
 };
 module.exports.unread = async (req, res) => {
-  if (!ObjectID.isValid(req.params.id))
-    return res.status(400).send("ID unknown : " + req.params.id);
+  const { id } = req.params;
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(400).send({
+        message: "User not found",
+      });
+    }
 
   try {
     await BookModel.findByIdAndUpdate(
