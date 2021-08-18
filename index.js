@@ -12,6 +12,7 @@ require('dotenv').config({path: './config/.env'});
 require('./config/db');
 const {checkUser, requireAuth} = require('./middleware/auth.middleware');
 const app = express();
+const {cloudinary} = require('./utils/cloudinary');
 app.use(cors({
     origin: function(origin, callback){
       return callback(null, true);
@@ -25,7 +26,6 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-
 
 // jwt
 app.get('*', checkUser); // dans chaque requete on doit vérifier si c'est bien le user concerné
